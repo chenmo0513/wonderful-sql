@@ -14,6 +14,7 @@
 <窗口函数> OVER ([ PARTITION BY <列名> ]
                      [ ORDER BY <排序用列名> ])  
 ```
+
 [   ]中的内容可以省略。
 
 窗口函数最关键的是搞明白关键字 **PARTITON BY** 和 **ORDER BY** 的作用。
@@ -49,10 +50,7 @@ ORDER BY 能够指定按照哪一列、何种顺序进行排序。为了按照�
 
 升序进行排序。本例中就省略了上述关键字 。
 
-
 ![图片](./img/ch05/ch0502.png)
-
-
 
 # 5.2 窗口函数种类
 
@@ -72,7 +70,7 @@ ORDER BY 能够指定按照哪一列、何种顺序进行排序。为了按照�
 
 * **DENSE_RANK函数**
 
-同样是计算排序，即使存在相同位次的记录，也不会跳过之后的位次。
+同样是计算排序，
 
 例）有 3 条记录排在第 1 位时：1 位、1 位、1 位、2 位……
 
@@ -96,7 +94,6 @@ SELECT  product_name
 
 ![图片](./img/ch05/ch0503.png)
 
-
 ## 5.2.2 聚合函数在窗口函数上的使用
 
 聚合函数在窗口函数中的使用方法和之前的专用窗口函数一样，只是出来的结果是一个**累计**的聚合函数值。
@@ -118,7 +115,6 @@ SELECT  product_id
 
 可以看出，聚合函数结果是，按我们指定的排序，这里是product_id，**当前所在行及之前所有的行**的合计或均值。即累计到当前行的聚合。
 
-
 # 5.3 窗口函数的的应用 - 计算移动平均
 
 在上面提到，聚合函数在窗口函数使用时，计算的是累积到当前行的所有的数据的聚合。 实际上，还可以指定更加详细的**汇总范围**。该汇总范围称为 **框架** (frame)。
@@ -128,10 +124,11 @@ SELECT  product_id
 ```sql
 <窗口函数> OVER (ORDER BY <排序用列名>
                  ROWS n PRECEDING )  
-                 
+         
 <窗口函数> OVER (ORDER BY <排序用列名>
                  ROWS BETWEEN n PRECEDING AND n FOLLOWING)
 ```
+
 PRECEDING（“之前”）， 将框架指定为 “截止到之前 n 行”，加上自身行
 
 FOLLOWING（“之后”）， 将框架指定为 “截止到之后 n 行”，加上自身行
@@ -176,6 +173,7 @@ SELECT  product_id
 
 * 原则上，窗口函数只能在SELECT子句中使用。
 * 窗口函数OVER 中的ORDER BY 子句并不会影响最终结果的排序。其只是用来决定窗口函数按何种顺序计算。
+
 # 5.4 GROUPING运算符
 
 ## 5.4.1 ROLLUP - 计算合计及小计
@@ -189,6 +187,7 @@ SELECT  product_type
   FROM product
  GROUP BY product_type, regist_date WITH ROLLUP;  
 ```
+
 得到的结果为：
 
 ![图片](./img/ch05/ch0508.png)
@@ -199,13 +198,14 @@ SELECT  product_type
 
 ROLLUP 可以对多列进行汇总求小计和合计。
 
-# ![图片](./img/ch05/ch0510.png)
-
 # 5.5 存储过程和函数
 
 ## 5.5.1 基本介绍
 
+delimiter  是告诉mysql解释器，该段命令是否已经结束了，mysql是否可以执行了。默认情况下，delimiter是分号
+
 基本语法：
+
 ```sql
 [delimiter //]($$，可以是其他特殊字符）
 CREATE
@@ -216,6 +216,7 @@ CREATE
   routine_body
 [END//]($$，可以是其他特殊字符）
 ```
+
 这些语句被用来创建一个存储例程（一个存储过程或函数）。也就是说，指定的例程被服务器知道了。默认情况下，一个存储例程与默认数据库相关联。要将该例程明确地与一个给定的数据库相关联，需要在创建该例程时将其名称指定为 `db_name.sp_name`。
 
 使用 `CALL` 语句调用一个存储过程。而要调用一个存储的函数时，则要在表达式中引用它。在表达式计算期间，该函数返回一个值。
@@ -225,6 +226,7 @@ CREATE
 ## 5.5.2 参数介绍
 
 存储过程和函数的参数有三类，分别是：`IN`，`OUT`，`INOUT`，其中：
+
 - `IN` 是入参。每个参数默认都是一个 `IN` 参数。如需设定一个参数为其他类型参数，请在参数名称前使用关键字 `OUT` 或 `INOUT` 。一个IN参数将一个值传递给一个过程。存储过程可能会修改这个值，但是当存储过程返回时，调用者不会看到这个修改。
 - `OUT` 是出参。一个 `OUT` 参数将一个值从过程中传回给调用者。它的初始值在过程中是 `NULL` ，当过程返回时，调用者可以看到它的值。
 - `INOUT` ：一个 `INOUT` 参数由调用者初始化，可以被存储过程修改，当存储过程返回时，调用者可以看到存储过程的任何改变。
@@ -234,10 +236,11 @@ CREATE
 ## 5.5.2 应用示例
 
 - 查询
-下面的示例显示了一个简单的存储过程，给定一个国家代码，计算在 `world` 数据库的城市表中出现的该国家的城市数量。使用 `IN` 参数传递国家代码，使用 `OUT` 参数返回城市计数:
+  下面的示例显示了一个简单的存储过程，给定一个国家代码，计算在 `world` 数据库的城市表中出现的该国家的城市数量。使用 `IN` 参数传递国家代码，使用 `OUT` 参数返回城市计数:
+
 ```sql
 mysql> DELIMITER //
-mysql> DROP PROCEDURE IF EXISTS citycount //
+mysql> 	 //
 Query OK, 0 rows affected (0.01 sec)
 
 mysql> CREATE PROCEDURE citycount (IN country CHAR(3), OUT cities INT)
@@ -261,6 +264,7 @@ Query OK, 1 row affected (0.01 sec)
 ```
 
 - 创建表
+
 ```SQL
 mysql> use world;
 Database changed
@@ -287,7 +291,9 @@ mysql> show tables;
 +-----------------+
 4 rows in set (0.02 sec)
 ```
+
 - 插入数据
+
 ```SQL
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_product_test`()
 BEGIN
@@ -304,17 +310,25 @@ END
 
 # 5.6 预处理声明 PREPARE Statement
 
+预处理声明作用：
+
+预编译语句的优势在于归纳为：**一次编译、多次运行，省去了解析优化等过程；此外预编译语句能防止sql注入。**
+当然就优化来说，很多时候最优的执行计划不是光靠知道sql语句的模板就能决定了，往往就是需要通过具体值来预估出成本代价。
+
 MySQL 从4.1版本开始引入了 `PREPARE Statement` 特性，使用 `client/server binary protocol` 代替 `textual protocol`，其将包含占位符 （） 的查询传递给 MySQL 服务器，如以下示例所示：
+
 ```sql
 SELECT * 
 FROM products 
 WHERE productCode = ?;
 ```
+
 当MySQL使用不同的 `productCode` 值执行此查询时，它不必完全解析查询。因此，这有助于MySQL更快地执行查询，特别是当MySQL多次执行相同的查询时。productcode
 
 由于预准备语句使用占位符 （），这有助于避免 SQL 注入的许多变体，从而使应用程序更安全。
 
 基本语法：
+
 ```sql
 PREPARE stmt_name FROM preparable_stmt
 ```
@@ -329,13 +343,12 @@ PREPARE stmt_name FROM preparable_stmt
 
 下图说明了预处理声明的使用过程：
 
-# ![图片](./img/ch05/ch0511MySQL-Prepared-Statement.png)
-
 ## 5.6.2 使用示例
 
 这里使用 `shop` 中的 `product` 表进行演示。
 
 首先，定义预处理声明如下：
+
 ```sql
 PREPARE stmt1 FROM 
 	'SELECT 
@@ -344,27 +357,33 @@ PREPARE stmt1 FROM
 	FROM product
         WHERE product_id = ?';
 ```
+
 其次，声明变量 `pcid`，代表商品编号，并将其值设置为 `0005`：
+
 ```sql
 SET @pcid = '0005'; 
 ```
+
 第三，执行预处理声明：
+
 ```sql
 EXECUTE stmt1 USING @pcid;
 ```
-# ![图片](./img/ch05/ch0512-prepare-result1.png)
 
 第四，为变量 `pcid` 分配另外一个商品编号：
+
 ```sql
 SET @pcid = '0008'; 
 ```
+
 第五，使用新的商品编号执行预处理声明：
+
 ```sql
 EXECUTE stmt1 USING @pcid;
 ```
-# ![图片](./img/ch05/ch0513-prepare-result2.png)
 
 最后，释放预处理声明以释放其占用的资源：
+
 ```sql
 DEALLOCATE PREPARE stmt1;
 ```
@@ -382,9 +401,24 @@ SELECT  product_id
        ,MAX(sale_price) OVER (ORDER BY product_id) AS Current_max_price
   FROM product;
 ```
+
+product_id 排序，截至本行之前的累计和。over 子句中不指定窗口时，聚合函数的范围是累计到当前行的聚合
+
 ## **5.2**
 
 继续使用product表，计算出按照登记日期（regist_date）升序进行排列的各日期的销售单价（sale_price）的总额。排序是需要将登记日期为NULL 的“运动 T 恤”记录排在第 1 位（也就是将其看作比其他日期都早）
+
+```sql
+SELECT  product_id
+       ,product_name
+       ,sale_price
+,product_type
+,regist_date
+       ,sum(sale_price) OVER (ORDER BY regist_date) AS sum_by_date
+  FROM product;
+```
+
+![5-2](img/ch05/5-2.png)
 
 ## **5.3**
 
@@ -392,13 +426,48 @@ SELECT  product_id
 
 ① 窗口函数不指定PARTITION BY的效果是什么？
 
+不指定的效果从第一行累计到当前行作统计；
+
 ② 为什么说窗口函数只能在SELECT子句中使用？实际上，在ORDER BY 子句使用系统并不会报错。
+
+ **窗口函数**是对WHERE或者GROUP BY**子句**处理后的结果进行操作，所以**窗口函数**原则**上只能**写**在SELECT子句中??**
 
 ## **5.4**
 
 使用存储过程创建20个与 `shop.product` 表结构相同的表，如下图所示：
 
-# ![图片](./img/ch05/ch0514-question5.4v2.png)
+```sql
+DROP PROCEDURE IF EXISTS 5_4;
 
+-- 1. 创建过程
+CREATE PROCEDURE 5_4 () BEGIN
+	DECLARE
+		i CHAR ( 2 );
+	DECLARE
+		table_name VARCHAR (20);
 
+	SET i = '01';
+	WHILE
+			i < 21 DO
 
+			SET table_name = CONCAT( 'table', i );
+
+		SET @ctsql = CONCAT('CREATE TABLE ', table_name, ' LIKE shop.product');
+		PREPARE create_stmt 
+		FROM
+			@ctsql;
+  
+  --  2.执行
+		EXECUTE create_stmt;
+-- LPAD 返回字符串str，左填充用字符串str中垫到len字符长度。如果str为大于len，返回值被缩短至len个字符
+-- CSAT 将给定表达式转换为指定数据类型的函数。
+		SET i = LPAD( CAST( i + 1 AS CHAR ), 2, 0 );
+	END WHILE;
+END;
+
+-- 3 call
+CALL 5_4 ();
+
+```
+
+![5-2](img/ch05/5-4.png)
